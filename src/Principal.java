@@ -7,7 +7,10 @@ import javax.swing.JFileChooser;
 
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.logging.Logger;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -16,11 +19,12 @@ import javax.swing.JTable;
 public class Principal {
 
 	private JFrame frame;
-	private JTextField textField;
+	private JTextField campoCaminho;
 	private JTable table;
 	private JTable table_1;
 	private File diretorio;
 	private Hashtable extenssoes;
+	private List<String> listExtensoes;
 
 	/**
 	 * Launch the application.
@@ -43,6 +47,7 @@ public class Principal {
 	 */
 	public Principal() {
 		initialize();
+		listExtensoes = new ArrayList<>();
 	}
 
 	/**
@@ -54,10 +59,10 @@ public class Principal {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Contador de Arquivos");
-		textField = new JTextField();
-		textField.setBounds(25, 39, 298, 19);
-		frame.getContentPane().add(textField);
-		textField.setColumns(10);
+		campoCaminho = new JTextField();
+		campoCaminho.setBounds(25, 39, 298, 19);
+		frame.getContentPane().add(campoCaminho);
+		campoCaminho.setColumns(10);
 
 		JButton btnAbrir = new JButton("Abrir...");
 		btnAbrir.addActionListener(new ActionListener() {
@@ -67,8 +72,10 @@ public class Principal {
 				int res = fc.showOpenDialog(frame);
 				if (res == JFileChooser.APPROVE_OPTION) {
 					diretorio = fc.getSelectedFile();
-					System.out.println(diretorio.getName());
 				}
+				campoCaminho.setFocusable(true);
+				String caminho = diretorio.getPath();
+				campoCaminho.setText(caminho);
 			}
 		});
 		btnAbrir.setBounds(343, 36, 91, 25);
@@ -100,11 +107,16 @@ public class Principal {
 	}
 
 	private void preencherTabela() {
-		String[][] dados = new String[1][2];
-		dados[0][0] = "doc";
-		dados[0][1] = "3";
-		TableModel model = new TableModel(dados);
-		table_1.setModel(model);
+		String[][] dados = new String[listExtensoes.size()][2];
+		int i = 0;
+		for (String strExtensao : listExtensoes) {
+			dados[i][0] = strExtensao;
+			System.out.println(strExtensao);
+			dados[i][1] = String.valueOf(extenssoes.get(strExtensao));
+			TableModel model = new TableModel(dados);
+			table_1.setModel(model);
+			i++;
+		}
 	}
 
 	public void varreDiretorios(String caminhoDiretorio) {
@@ -127,13 +139,15 @@ public class Principal {
 						String[] partes = subDiretorio.getName().split("\\.");
 						if (partes.length > 1) {
 							String extensao = partes[partes.length - 1];
-							System.out.println(extensao);
+//							System.out.println(extensao);
 							if (extenssoes.containsKey(extensao)) {
-								 //Fazer alguma coisa
+								 int qtd = (int) extenssoes.get(extensao) + 1;
+								 extenssoes.put(extensao, qtd);
+//								 System.out.println(extenssoes.get(extensao));
 							} else {
-//								fazer alguma coisa
+								extenssoes.put(extensao, 1);
+								listExtensoes.add(extensao);
 							}
-							extenssoes.put(extensao, 0);
 						}
 					}
 				}
