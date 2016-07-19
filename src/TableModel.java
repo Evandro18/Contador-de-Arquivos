@@ -3,7 +3,7 @@ import javax.swing.table.DefaultTableModel;
 @SuppressWarnings("serial")
 public class TableModel extends DefaultTableModel {
 
-	public static final String[] NOMES_COLUNAS = { "TIPO", "QUANTIDADE"};
+	public static final String[] NOMES_COLUNAS = { "Tipo", "Quantidade"};
 
 	public TableModel(String[][] dados) {
 		super(dados, NOMES_COLUNAS);

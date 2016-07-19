@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import java.awt.Color;
 
 public class Principal {
 
@@ -55,16 +56,18 @@ public class Principal {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.getContentPane().setBackground(new Color(210, 180, 140));
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Contador de Arquivos");
 		campoCaminho = new JTextField();
-		campoCaminho.setBounds(25, 39, 298, 19);
+		campoCaminho.setBounds(25, 39, 306, 19);
 		frame.getContentPane().add(campoCaminho);
 		campoCaminho.setColumns(10);
 
 		JButton btnAbrir = new JButton("Abrir...");
+		btnAbrir.setBackground(new Color(135, 206, 250));
 		btnAbrir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser();
@@ -82,10 +85,11 @@ public class Principal {
 		frame.getContentPane().add(btnAbrir);
 
 		JLabel lblDiretrio = new JLabel("Diretório");
-		lblDiretrio.setBounds(30, 12, 66, 15);
+		lblDiretrio.setBounds(25, 22, 66, 15);
 		frame.getContentPane().add(lblDiretrio);
 
 		JButton btnIniciar = new JButton("Iniciar");
+		btnIniciar.setBackground(new Color(135, 206, 250));
 		btnIniciar.setBounds(173, 98, 114, 25);
 		btnIniciar.addActionListener(new ActionListener() {
 
@@ -139,11 +143,9 @@ public class Principal {
 						String[] partes = subDiretorio.getName().split("\\.");
 						if (partes.length > 1) {
 							String extensao = partes[partes.length - 1];
-//							System.out.println(extensao);
 							if (extenssoes.containsKey(extensao)) {
 								 int qtd = (int) extenssoes.get(extensao) + 1;
 								 extenssoes.put(extensao, qtd);
-//								 System.out.println(extenssoes.get(extensao));
 							} else {
 								extenssoes.put(extensao, 1);
 								listExtensoes.add(extensao);
