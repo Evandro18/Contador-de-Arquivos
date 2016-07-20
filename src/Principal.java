@@ -19,14 +19,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.logging.Logger;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.Color;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 
 public class Principal {
 
@@ -37,7 +35,6 @@ public class Principal {
 	private Hashtable<String, Integer> extenssoes;
 	private List<String> listExtensoes;
 	private List<String> maisUsadas;
-	private List<String> listaEspera;
 
 	/**
 	 * Launch the application.
@@ -74,6 +71,7 @@ public class Principal {
 		janela.setTitle("Contador de Arquivos");
 		campoCaminho = new JTextField();
 		campoCaminho.setBounds(158, 36, 385, 22);
+		campoCaminho.setEditable(false);
 		janela.getContentPane().add(campoCaminho);
 		campoCaminho.setColumns(10);
 		listExtensoes = new ArrayList<>();
@@ -82,14 +80,16 @@ public class Principal {
 		btnAbrir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser();
-				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				int res = fc.showOpenDialog(janela);
-				if (res == JFileChooser.APPROVE_OPTION) {
-					diretorio = fc.getSelectedFile();
-				}
-				campoCaminho.setFocusable(true);
-				String caminho = diretorio.getPath();
-				campoCaminho.setText(caminho);
+				try{
+					fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					int res = fc.showOpenDialog(janela);
+					if (res == JFileChooser.APPROVE_OPTION) {
+						diretorio = fc.getSelectedFile();
+					}
+					campoCaminho.setFocusable(true);
+					String caminho = diretorio.getPath();
+					campoCaminho.setText(caminho);
+				} catch (Exception e) {}
 			}
 		});
 		btnAbrir.setBounds(555, 36, 91, 25);
@@ -106,9 +106,15 @@ public class Principal {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				extenssoes = new Hashtable<>();
-				varreDiretorios(diretorio.getAbsolutePath());
-				preencherTabela();
+				if (diretorio == null) {
+					JOptionPane.showMessageDialog(janela, "Selecione um diretório.");
+				} else if (!diretorio.isDirectory()){
+					JOptionPane.showMessageDialog(janela, "Selecione um diretório válido.");
+				} else {
+					extenssoes = new Hashtable<>();
+					varreDiretorios(diretorio.getAbsolutePath());
+					preencherTabela();
+				}
 			}
 		});
 		janela.getContentPane().add(btnIniciar);
@@ -172,14 +178,12 @@ public class Principal {
 		painelRolagem2.setBounds(158, 98, 536, 391);
 		janela.getContentPane().add(painelRolagem2);
 		painelRolagem2.setViewportView(chartPanel);
-		listaEspera = new ArrayList<>();
 	}
 
 	private void preencherTabela() {
 
 		String[][] dados = new String[listExtensoes.size()][2];
 		int i = 0;
-		int j = 0;
 		for (String strExtensao : listExtensoes) {
 			dados[i][0] = strExtensao;
 			dados[i][1] = String.valueOf(extenssoes.get(strExtensao));
