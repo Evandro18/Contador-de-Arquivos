@@ -2,6 +2,15 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JTextField;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot3D;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
+import org.jfree.util.Rotation;
+
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 
@@ -16,15 +25,15 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.Color;
+import javax.swing.JPanel;
 
 public class Principal {
 
-	private JFrame frame;
+	private JFrame janela;
 	private JTextField campoCaminho;
 	private JTable table;
-	private JTable table_1;
 	private File diretorio;
-	private Hashtable extenssoes;
+	private Hashtable<String, Integer> extenssoes;
 	private List<String> listExtensoes;
 
 	/**
@@ -35,7 +44,7 @@ public class Principal {
 			public void run() {
 				try {
 					Principal window = new Principal();
-					window.frame.setVisible(true);
+					window.janela.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -48,31 +57,30 @@ public class Principal {
 	 */
 	public Principal() {
 		initialize();
-		listExtensoes = new ArrayList<>();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.getContentPane().setBackground(new Color(210, 180, 140));
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
-		frame.setTitle("Contador de Arquivos");
+		janela = new JFrame();
+		janela.getContentPane().setBackground(new Color(210, 180, 140));
+		janela.setBounds(100, 100, 712, 533);
+		janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		janela.getContentPane().setLayout(null);
+		janela.setTitle("Contador de Arquivos");
 		campoCaminho = new JTextField();
-		campoCaminho.setBounds(25, 39, 306, 19);
-		frame.getContentPane().add(campoCaminho);
+		campoCaminho.setBounds(158, 36, 385, 22);
+		janela.getContentPane().add(campoCaminho);
 		campoCaminho.setColumns(10);
-
+		listExtensoes = new ArrayList<>();
 		JButton btnAbrir = new JButton("Abrir...");
 		btnAbrir.setBackground(new Color(135, 206, 250));
 		btnAbrir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser();
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				int res = fc.showOpenDialog(frame);
+				int res = fc.showOpenDialog(janela);
 				if (res == JFileChooser.APPROVE_OPTION) {
 					diretorio = fc.getSelectedFile();
 				}
@@ -81,16 +89,16 @@ public class Principal {
 				campoCaminho.setText(caminho);
 			}
 		});
-		btnAbrir.setBounds(343, 36, 91, 25);
-		frame.getContentPane().add(btnAbrir);
+		btnAbrir.setBounds(555, 36, 91, 25);
+		janela.getContentPane().add(btnAbrir);
 
 		JLabel lblDiretrio = new JLabel("Diretório");
-		lblDiretrio.setBounds(25, 22, 66, 15);
-		frame.getContentPane().add(lblDiretrio);
+		lblDiretrio.setBounds(74, 39, 66, 15);
+		janela.getContentPane().add(lblDiretrio);
 
 		JButton btnIniciar = new JButton("Iniciar");
 		btnIniciar.setBackground(new Color(135, 206, 250));
-		btnIniciar.setBounds(173, 98, 114, 25);
+		btnIniciar.setBounds(230, 70, 114, 25);
 		btnIniciar.addActionListener(new ActionListener() {
 
 			@Override
@@ -100,27 +108,50 @@ public class Principal {
 				preencherTabela();
 			}
 		});
-		frame.getContentPane().add(btnIniciar);
+		janela.getContentPane().add(btnIniciar);
 
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(12, 135, 434, 128);
-		frame.getContentPane().add(scrollPane);
+		table = new JTable();
+		preencherTabela();
+		JScrollPane painelRolagem = new JScrollPane();
+		painelRolagem.setBounds(12, 98, 125, 391);
+		janela.getContentPane().add(painelRolagem, "cell 1 8,alignx left");
+		painelRolagem.setViewportView(table);
+	}
 
-		table_1 = new JTable();
-		scrollPane.setRowHeaderView(table_1);
+	private void gerarGrafico() {
+		// grafico
+		// Isso irá criar o conjunto de dados
+		PieDataset dataset = createDataset();
+
+		// com base no conjunto de dados que criamos o gráfico
+		JFreeChart chart = createChart(dataset, "");
+
+		// vamos colocar o gráfico em um painel
+		ChartPanel chartPanel = new ChartPanel(chart);
+		chartPanel.setPreferredSize(new java.awt.Dimension(300, 300));
+		JScrollPane painelRolagem2 = new JScrollPane();
+		painelRolagem2.setBounds(158, 98, 536, 391);
+		janela.getContentPane().add(painelRolagem2);
+		painelRolagem2.setViewportView(chartPanel);
+
 	}
 
 	private void preencherTabela() {
+		
 		String[][] dados = new String[listExtensoes.size()][2];
 		int i = 0;
 		for (String strExtensao : listExtensoes) {
 			dados[i][0] = strExtensao;
-			System.out.println(strExtensao);
 			dados[i][1] = String.valueOf(extenssoes.get(strExtensao));
-			TableModel model = new TableModel(dados);
-			table_1.setModel(model);
 			i++;
 		}
+		TableModel modelo = new TableModel(dados);
+		table.setModel(modelo);
+		gerarGrafico();
+		
+		if (extenssoes != null)	extenssoes.clear();
+		listExtensoes.clear();
+		
 	}
 
 	public void varreDiretorios(String caminhoDiretorio) {
@@ -144,8 +175,8 @@ public class Principal {
 						if (partes.length > 1) {
 							String extensao = partes[partes.length - 1];
 							if (extenssoes.containsKey(extensao)) {
-								 int qtd = (int) extenssoes.get(extensao) + 1;
-								 extenssoes.put(extensao, qtd);
+								int qtd = (int) extenssoes.get(extensao) + 1;
+								extenssoes.put(extensao, qtd);
 							} else {
 								extenssoes.put(extensao, 1);
 								listExtensoes.add(extensao);
@@ -163,5 +194,29 @@ public class Principal {
 			return arquivo;
 		}
 		return null;
+	}
+
+	private PieDataset createDataset() {
+		DefaultPieDataset result = new DefaultPieDataset();
+		for (String string : listExtensoes) {
+			result.setValue(string, (int) extenssoes.get(string));
+		}
+		return result;
+	}
+
+	private JFreeChart createChart(PieDataset dataset, String title) {
+
+		JFreeChart chart = ChartFactory.createPieChart3D(title, // título /
+																// gráfico
+				dataset, // dados
+				true, // include lenda
+				true, false);
+
+		PiePlot3D plot = (PiePlot3D) chart.getPlot();
+		plot.setStartAngle(290);
+		plot.setDirection(Rotation.CLOCKWISE);
+		plot.setForegroundAlpha(0.5f);
+		return chart;
+
 	}
 }
