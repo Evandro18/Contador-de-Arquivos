@@ -26,6 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.Color;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 public class Principal {
 
@@ -35,6 +36,8 @@ public class Principal {
 	private File diretorio;
 	private Hashtable<String, Integer> extenssoes;
 	private List<String> listExtensoes;
+	private List<String> maisUsadas;
+	private List<String> listaEspera;
 
 	/**
 	 * Launch the application.
@@ -116,6 +119,42 @@ public class Principal {
 		painelRolagem.setBounds(12, 98, 125, 391);
 		janela.getContentPane().add(painelRolagem, "cell 1 8,alignx left");
 		painelRolagem.setViewportView(table);
+		criarMaisUsadas();
+	}
+
+	private void criarMaisUsadas() {
+		maisUsadas = new ArrayList<String>();
+		maisUsadas.add("exe");
+		maisUsadas.add("mp3");
+		maisUsadas.add("wma");
+		maisUsadas.add("avi");
+		maisUsadas.add("bmp");
+		maisUsadas.add("gif");
+		maisUsadas.add("jpeg");
+		maisUsadas.add("jpg");
+		maisUsadas.add("png");
+		maisUsadas.add("zip");
+		maisUsadas.add("rar");
+		maisUsadas.add("txt");
+		maisUsadas.add("doc");
+		maisUsadas.add("ls");
+		maisUsadas.add("ppt");
+		maisUsadas.add("pdf");
+		maisUsadas.add("html");
+		maisUsadas.add("js");
+		maisUsadas.add("php");
+		maisUsadas.add("java");
+		maisUsadas.add("py");
+		maisUsadas.add("docx");
+		maisUsadas.add("pps");
+		maisUsadas.add("xls");
+		maisUsadas.add("xlsx");
+		maisUsadas.add("wmv");
+		maisUsadas.add("xml");
+		maisUsadas.add("sql");
+		maisUsadas.add("odt");
+		maisUsadas.add("tar.gz");
+		maisUsadas.add("pkt");
 	}
 
 	private void gerarGrafico() {
@@ -133,25 +172,28 @@ public class Principal {
 		painelRolagem2.setBounds(158, 98, 536, 391);
 		janela.getContentPane().add(painelRolagem2);
 		painelRolagem2.setViewportView(chartPanel);
-
+		listaEspera = new ArrayList<>();
 	}
 
 	private void preencherTabela() {
-		
+
 		String[][] dados = new String[listExtensoes.size()][2];
 		int i = 0;
+		int j = 0;
 		for (String strExtensao : listExtensoes) {
 			dados[i][0] = strExtensao;
 			dados[i][1] = String.valueOf(extenssoes.get(strExtensao));
 			i++;
 		}
+
 		TableModel modelo = new TableModel(dados);
 		table.setModel(modelo);
 		gerarGrafico();
-		
-		if (extenssoes != null)	extenssoes.clear();
+
+		if (extenssoes != null)
+			extenssoes.clear();
 		listExtensoes.clear();
-		
+
 	}
 
 	public void varreDiretorios(String caminhoDiretorio) {
@@ -162,6 +204,10 @@ public class Principal {
 	}
 
 	private void varreDiretorios(File diretorio, String tabulacoes) {
+		String outros = "outros...";
+		extenssoes.put(outros, 0);
+		int qtdOutros = 0;
+		String extensao = "";
 		String[] listaDiretorios = diretorio.list();
 		if (listaDiretorios != null && listaDiretorios.length > 0) {
 			for (String nomeSubDiretorio : diretorio.list()) {
@@ -173,13 +219,23 @@ public class Principal {
 					} else {
 						String[] partes = subDiretorio.getName().split("\\.");
 						if (partes.length > 1) {
-							String extensao = partes[partes.length - 1];
-							if (extenssoes.containsKey(extensao)) {
-								int qtd = (int) extenssoes.get(extensao) + 1;
-								extenssoes.put(extensao, qtd);
-							} else {
+							extensao = partes[partes.length - 1];
+						} else if(partes.length > 2) {
+							extensao = partes[partes.length-2] + "." + partes[partes.length-1];
+						}
+						if (extenssoes.containsKey(extensao)) {
+							int qtd = (int) extenssoes.get(extensao) + 1;
+							extenssoes.put(extensao, qtd);
+						} else {
+							if (maisUsadas.contains(extensao)) {
 								extenssoes.put(extensao, 1);
 								listExtensoes.add(extensao);
+							} else {
+								qtdOutros = (int) extenssoes.get(outros) + 1;
+								extenssoes.put(outros, qtdOutros);
+								if (!listExtensoes.contains(outros)) {
+									listExtensoes.add(outros);
+								}
 							}
 						}
 					}
