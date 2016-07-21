@@ -222,25 +222,26 @@ public class Principal {
 						varreDiretorios(subDiretorio, tabulacoes + "\t");
 					} else {
 						String[] partes = subDiretorio.getName().split("\\.");
-						if (partes.length > 1) {
+						if (partes.length > 1 && partes.length <=2) {
 							extensao = partes[partes.length - 1];
-						} else if(partes.length > 2) {
+						} 
+						if(partes.length > 2) {
 							extensao = partes[partes.length-2] + "." + partes[partes.length-1];
 						}
 						if (extenssoes.containsKey(extensao)) {
 							int qtd = (int) extenssoes.get(extensao) + 1;
 							extenssoes.put(extensao, qtd);
 						} else {
-							if (maisUsadas.contains(extensao)) {
+//							if (maisUsadas.contains(extensao)) {
 								extenssoes.put(extensao, 1);
 								listExtensoes.add(extensao);
-							} else {
-								qtdOutros = (int) extenssoes.get(outros) + 1;
-								extenssoes.put(outros, qtdOutros);
-								if (!listExtensoes.contains(outros)) {
-									listExtensoes.add(outros);
-								}
-							}
+//							} else {
+//								qtdOutros = (int) extenssoes.get(outros) + 1;
+//								extenssoes.put(outros, qtdOutros);
+//								if (!listExtensoes.contains(outros)) {
+//									listExtensoes.add(outros);
+//								}
+//							}
 						}
 					}
 				}
