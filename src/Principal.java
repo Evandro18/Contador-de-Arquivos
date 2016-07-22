@@ -22,6 +22,7 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.Color;
@@ -66,12 +67,12 @@ public class Principal {
 	private void initialize() {
 		janela = new JFrame();
 		janela.getContentPane().setBackground(new Color(210, 180, 140));
-		janela.setBounds(100, 100, 712, 533);
+		janela.setBounds(100, 100, 1336, 700);
 		janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		janela.getContentPane().setLayout(null);
 		janela.setTitle("Contador de Arquivos");
 		campoCaminho = new JTextField();
-		campoCaminho.setBounds(158, 36, 385, 22);
+		campoCaminho.setBounds(298, 36, 514, 22);
 		campoCaminho.setEditable(false);
 		janela.getContentPane().add(campoCaminho);
 		campoCaminho.setColumns(10);
@@ -94,16 +95,16 @@ public class Principal {
 				}
 			}
 		});
-		btnAbrir.setBounds(555, 36, 91, 25);
+		btnAbrir.setBounds(824, 34, 91, 25);
 		janela.getContentPane().add(btnAbrir);
 
 		JLabel lblDiretrio = new JLabel("Diret��rio");
-		lblDiretrio.setBounds(74, 39, 66, 15);
+		lblDiretrio.setBounds(214, 39, 66, 15);
 		janela.getContentPane().add(lblDiretrio);
 
 		JButton btnIniciar = new JButton("Iniciar");
 		btnIniciar.setBackground(new Color(135, 206, 250));
-		btnIniciar.setBounds(230, 70, 114, 25);
+		btnIniciar.setBounds(431, 81, 114, 25);
 		btnIniciar.addActionListener(new ActionListener() {
 
 			@Override
@@ -124,7 +125,7 @@ public class Principal {
 		table = new JTable();
 		preencherTabela();
 		JScrollPane painelRolagem = new JScrollPane();
-		painelRolagem.setBounds(12, 98, 125, 391);
+		painelRolagem.setBounds(7, 118, 189, 490);
 		janela.getContentPane().add(painelRolagem, "cell 1 8,alignx left");
 		painelRolagem.setViewportView(table);
 		criarMaisUsadas();
@@ -177,7 +178,7 @@ public class Principal {
 		ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new java.awt.Dimension(300, 300));
 		JScrollPane painelRolagem2 = new JScrollPane();
-		painelRolagem2.setBounds(158, 98, 536, 391);
+		painelRolagem2.setBounds(205, 118, 870, 490);
 		janela.getContentPane().add(painelRolagem2);
 		painelRolagem2.setViewportView(chartPanel);
 	}
@@ -210,8 +211,8 @@ public class Principal {
 	}
 
 	private void varreDiretorios(File diretorio, String tabulacoes) {
-		String outros = "outros...";
-		extenssoes.put(outros, 0);
+//		String outros = "outros...";
+//		extenssoes.put(outros, 0);
 		int qtdOutros = 0;
 		String extensao = "";
 		String[] listaDiretorios = diretorio.list();
@@ -229,6 +230,9 @@ public class Principal {
 						}
 						if (partes.length > 2) {
 							extensao = partes[partes.length - 2] + "." + partes[partes.length - 1];
+						}
+						if (partes.length == 1) {
+							extensao = "nenhuma";
 						}
 						if (extenssoes.containsKey(extensao)) {
 							int qtd = (int) extenssoes.get(extensao) + 1;
