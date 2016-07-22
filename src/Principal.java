@@ -35,7 +35,8 @@ public class Principal {
 	private Hashtable<String, Integer> extenssoes;
 	private List<String> listExtensoes;
 	private List<String> maisUsadas;
-
+	private int qtdOutros = 0;
+	private String outros;
 	/**
 	 * Launch the application.
 	 */
@@ -80,7 +81,7 @@ public class Principal {
 		btnAbrir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser();
-				try{
+				try {
 					fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 					int res = fc.showOpenDialog(janela);
 					if (res == JFileChooser.APPROVE_OPTION) {
@@ -89,13 +90,14 @@ public class Principal {
 					campoCaminho.setFocusable(true);
 					String caminho = diretorio.getPath();
 					campoCaminho.setText(caminho);
-				} catch (Exception e) {}
+				} catch (Exception e) {
+				}
 			}
 		});
 		btnAbrir.setBounds(555, 36, 91, 25);
 		janela.getContentPane().add(btnAbrir);
 
-		JLabel lblDiretrio = new JLabel("Diretório");
+		JLabel lblDiretrio = new JLabel("Diret��rio");
 		lblDiretrio.setBounds(74, 39, 66, 15);
 		janela.getContentPane().add(lblDiretrio);
 
@@ -107,9 +109,9 @@ public class Principal {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (diretorio == null) {
-					JOptionPane.showMessageDialog(janela, "Selecione um diretório.");
-				} else if (!diretorio.isDirectory()){
-					JOptionPane.showMessageDialog(janela, "Selecione um diretório válido.");
+					JOptionPane.showMessageDialog(janela, "Selecione um diret��rio.");
+				} else if (!diretorio.isDirectory()) {
+					JOptionPane.showMessageDialog(janela, "Selecione um diret��rio v��lido.");
 				} else {
 					extenssoes = new Hashtable<>();
 					varreDiretorios(diretorio.getAbsolutePath());
@@ -165,13 +167,13 @@ public class Principal {
 
 	private void gerarGrafico() {
 		// grafico
-		// Isso irá criar o conjunto de dados
+		// Isso ir�� criar o conjunto de dados
 		PieDataset dataset = createDataset();
 
-		// com base no conjunto de dados que criamos o gráfico
+		// com base no conjunto de dados que criamos o gr��fico
 		JFreeChart chart = createChart(dataset, "");
-
-		// vamos colocar o gráfico em um painel
+		chart.removeLegend();
+		// vamos colocar o gr��fico em um painel
 		ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new java.awt.Dimension(300, 300));
 		JScrollPane painelRolagem2 = new JScrollPane();
@@ -222,26 +224,26 @@ public class Principal {
 						varreDiretorios(subDiretorio, tabulacoes + "\t");
 					} else {
 						String[] partes = subDiretorio.getName().split("\\.");
-						if (partes.length > 1 && partes.length <=2) {
+						if (partes.length > 1 && partes.length <= 2) {
 							extensao = partes[partes.length - 1];
-						} 
-						if(partes.length > 2) {
-							extensao = partes[partes.length-2] + "." + partes[partes.length-1];
+						}
+						if (partes.length > 2) {
+							extensao = partes[partes.length - 2] + "." + partes[partes.length - 1];
 						}
 						if (extenssoes.containsKey(extensao)) {
 							int qtd = (int) extenssoes.get(extensao) + 1;
 							extenssoes.put(extensao, qtd);
 						} else {
-//							if (maisUsadas.contains(extensao)) {
-								extenssoes.put(extensao, 1);
-								listExtensoes.add(extensao);
-//							} else {
-//								qtdOutros = (int) extenssoes.get(outros) + 1;
-//								extenssoes.put(outros, qtdOutros);
-//								if (!listExtensoes.contains(outros)) {
-//									listExtensoes.add(outros);
-//								}
-//							}
+							// if (maisUsadas.contains(extensao)) {
+							extenssoes.put(extensao, 1);
+							listExtensoes.add(extensao);
+							// } else {
+							// qtdOutros = (int) extenssoes.get(outros) + 1;
+							// extenssoes.put(outros, qtdOutros);
+							// if (!listExtensoes.contains(outros)) {
+							// listExtensoes.add(outros);
+							// }
+							// }
 						}
 					}
 				}
@@ -260,19 +262,26 @@ public class Principal {
 	private PieDataset createDataset() {
 		DefaultPieDataset result = new DefaultPieDataset();
 		for (String string : listExtensoes) {
-			result.setValue(string, (int) extenssoes.get(string));
+			if (maisUsadas.contains(string)) {
+				result.setValue(string, (int) extenssoes.get(string));
+			} else {
+				outros = "outros";
+				qtdOutros = qtdOutros++;									
+			}
+		}
+		if (outros != null) {
+			result.setValue(outros, qtdOutros);
 		}
 		return result;
 	}
 
 	private JFreeChart createChart(PieDataset dataset, String title) {
 
-		JFreeChart chart = ChartFactory.createPieChart3D(title, // título /
-																// gráfico
+		JFreeChart chart = ChartFactory.createPieChart3D(title, // t��tulo / //
+																// gr��fico
 				dataset, // dados
 				true, // include lenda
 				true, false);
-
 		PiePlot3D plot = (PiePlot3D) chart.getPlot();
 		plot.setStartAngle(290);
 		plot.setDirection(Rotation.CLOCKWISE);
