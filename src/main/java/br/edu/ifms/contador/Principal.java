@@ -45,6 +45,7 @@ public class Principal {
 
     /**
      * Create the application.
+     * @wbp.parser.entryPoint
      */
     public Principal() {
         initialize();
@@ -55,14 +56,14 @@ public class Principal {
      */
     private void initialize() {
         janela = new JFrame();
-        janela.setBounds(100, 100, 1100, 650);
+        janela.setBounds(100, 100, 1100, 628);
         janela.setLocationRelativeTo(null);
         janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        janela.getContentPane().setLayout(null);
         janela.setTitle("Contador de Arquivos");
+        janela.getContentPane().setLayout(null);
 
         campoCaminho = new JTextField();
-        campoCaminho.setBounds(298, 36, 514, 22);
+        campoCaminho.setBounds(271, 14, 509, 20);
         campoCaminho.setEditable(false);
 
         janela.getContentPane().add(campoCaminho);
@@ -70,6 +71,7 @@ public class Principal {
         listExtensoes = new ArrayList<>();
 
         JButton btnAbrir = new JButton("Abrir...");
+        btnAbrir.setBounds(813, 7, 95, 33);
         btnAbrir.setIcon(new ImageIcon(Principal.class.getResource("/img/folder.png")));
         btnAbrir.addActionListener(arg0 -> {
             JFileChooser fc = new JFileChooser();
@@ -93,16 +95,15 @@ public class Principal {
                 e.printStackTrace();
             }
         });
-        btnAbrir.setBounds(824, 34, 110, 25);
         janela.getContentPane().add(btnAbrir);
 
         JLabel lblDiretrio = new JLabel("Diretorio");
-        lblDiretrio.setBounds(214, 39, 66, 15);
+        lblDiretrio.setBounds(196, 17, 71, 14);
         janela.getContentPane().add(lblDiretrio);
 
         JButton btnIniciar = new JButton("Iniciar");
+        btnIniciar.setBounds(481, 44, 89, 33);
         btnIniciar.setIcon(new ImageIcon(Principal.class.getResource("/img/play.png")));
-        btnIniciar.setBounds(431, 81, 110, 25);
         btnIniciar.addActionListener(e -> {
             if (diretorio == null)
                 JOptionPane.showMessageDialog(janela, "Selecione um diretorio.");
@@ -119,9 +120,9 @@ public class Principal {
         table = new JTable();
         preencherTabela();
         JScrollPane painelRolagem = new JScrollPane();
-        painelRolagem.setBounds(7, 118, 189, 490);
+        painelRolagem.setBounds(7, 81, 185, 490);
 
-        janela.getContentPane().add(painelRolagem, "cell 1 8,alignx left");
+        janela.getContentPane().add(painelRolagem);
         painelRolagem.setViewportView(table);
         criarMaisUsadas();
     }
@@ -173,10 +174,11 @@ public class Principal {
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(300, 300));
         JScrollPane painelRolagem2 = new JScrollPane();
-        painelRolagem2.setBounds(205, 118, 870, 490);
+        painelRolagem2.setBounds(196, 81, 863, 490);
 
         janela.getContentPane().add(painelRolagem2);
         painelRolagem2.setViewportView(chartPanel);
+        chartPanel.setLayout(null);
     }
 
     private void preencherTabela() {
