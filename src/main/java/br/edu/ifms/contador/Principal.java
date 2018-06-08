@@ -45,7 +45,6 @@ public class Principal {
 
     /**
      * Create the application.
-     * @wbp.parser.entryPoint
      */
     public Principal() {
         initialize();
@@ -58,7 +57,7 @@ public class Principal {
         janela = new JFrame();
         janela.setBounds(100, 100, 1100, 628);
         janela.setLocationRelativeTo(null);
-        janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        janela.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         janela.setTitle("Contador de Arquivos");
         janela.getContentPane().setLayout(null);
 
@@ -79,15 +78,11 @@ public class Principal {
                 fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 int res = fc.showOpenDialog(janela);
 
-                if (res == JFileChooser.APPROVE_OPTION)
+                if (res == JFileChooser.APPROVE_OPTION) {
                     diretorio = fc.getSelectedFile();
+                }
 
-                String caminho;
-
-                if (diretorio != null)
-                    caminho = diretorio.getPath();
-                else
-                    caminho = "";
+                String caminho = diretorio != null ? diretorio.getPath() : "";
 
                 campoCaminho.setFocusable(true);
                 campoCaminho.setText(caminho);
@@ -194,13 +189,15 @@ public class Principal {
         table.setModel(modelo);
         gerarGrafico();
 
-        if (extenssoes != null)
+        if (extenssoes != null) {
             extenssoes.clear();
+        }
+
         listExtensoes.clear();
     }
 
     private void varreDiretorios(String caminhoDiretorio) {
-        File arquivo = abreArquivo(caminhoDiretorio);
+        File arquivo = openFile(caminhoDiretorio);
 
         if (arquivo != null && arquivo.exists() && arquivo.isDirectory())
             varreDiretorios(arquivo, "");
@@ -213,19 +210,22 @@ public class Principal {
         if (listaDiretorios != null && listaDiretorios.length > 0) {
             for (String nomeSubDiretorio : diretorio.list()) {
                 nomeSubDiretorio = diretorio.getPath() + "/" + nomeSubDiretorio;
-                File subDiretorio = abreArquivo(nomeSubDiretorio);
+                File subDiretorio = openFile(nomeSubDiretorio);
 
                 if (subDiretorio != null && subDiretorio.exists()) {
                     if (subDiretorio.isDirectory()) {
                         varreDiretorios(subDiretorio, tabulacoes + "\t");
                     } else {
                         String[] partes = subDiretorio.getName().split("\\.");
-                        if (partes.length > 1 && partes.length <= 2)
+                        if (partes.length > 1 && partes.length <= 2) {
                             extensao = partes[partes.length - 1];
-                        if (partes.length > 2)
+                        }
+                        if (partes.length > 2) {
                             extensao = partes[partes.length - 2] + "." + partes[partes.length - 1];
-                        if (partes.length == 1)
+                        }
+                        if (partes.length == 1) {
                             extensao = "nenhuma";
+                        }
                         if (extenssoes.containsKey(extensao)) {
                             int qtd = extenssoes.get(extensao) + 1;
                             extenssoes.put(extensao, qtd);
@@ -239,27 +239,27 @@ public class Principal {
         }
     }
 
-    private File abreArquivo(String caminhoArquivo) {
-        File arquivo = new File(caminhoArquivo);
-        if (arquivo.exists())
-            return arquivo;
-        return null;
+    private File openFile(String path) {
+        File file = new File(path);
+        return file.exists() ? file : null;
     }
 
     private PieDataset createDataset() {
         DefaultPieDataset result = new DefaultPieDataset();
 
         for (String string : listExtensoes) {
-            if (maisUsadas.contains(string))
+            if (maisUsadas.contains(string)) {
                 result.setValue(string, (int) extenssoes.get(string));
-            else {
+            } else {
                 outros = "outros";
-                qtdOutros = qtdOutros++;
+                qtdOutros++;
             }
         }
 
-        if (outros != null)
+        if (outros != null) {
             result.setValue(outros, qtdOutros);
+        }
+
         return result;
     }
 
@@ -272,4 +272,5 @@ public class Principal {
         plot.setForegroundAlpha(0.5f);
         return chart;
     }
+
 }

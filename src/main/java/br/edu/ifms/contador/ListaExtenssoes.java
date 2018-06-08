@@ -21,19 +21,9 @@ public class ListaExtenssoes implements Comparable<ListaExtenssoes> {
         this.valor = valor;
     }
 
-    public ListaExtenssoes() {
-
-    }
-
     @Override
     public int compareTo(ListaExtenssoes o) {
-        if (valor < o.valor) {
-            return -1;
-        }
-        if (valor > o.valor) {
-            return 1;
-        }
-        return 0;
+        return Integer.compare(valor, o.valor);
     }
 
 }
